@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | Fake Emails</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <span class="shield-icon">🛡️</span>
+            <h1>CyberGuard</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-btn">Home</a></li>
+            <li><a href="emails.html" class="nav-btn active">Fake Emails</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section class="active animate-in">
+            <a href="index.html" class="back-link">← Back to Directory</a>
+
+            <div class="section-header">
+                <h2>Fake Emails (Phishing)</h2>
+                <p>Deceptive emails designed to steal credentials or money. Click an example below to launch the
+                    interactive simulation.</p>
+            </div>
+
+            <div class="grid-layout">
+                <a href="simulator.html?id=ceo-fraud" class="glass-card hazard-card category-link">
+                    <div class="card-icon">👤</div>
+                    <h3>AI-Generated CEO/HR Fraud</h3>
+                    <p>Attackers use AI tools to flawlessly mimic the writing style of your senior executives.</p>
+                    <div class="example-box"><strong>Simulator:</strong> Wire Transfer Request</div>
+                </a>
+
+                <a href="simulator.html?id=mfa-alert" class="glass-card hazard-card category-link">
+                    <div class="card-icon">🔐</div>
+                    <h3>Fake MFA Alerts</h3>
+                    <p>Urgent notification claiming an unauthorized login attempt designed to steal 2FA codes.</p>
+                    <div class="example-box"><strong>Simulator:</strong> Security Alert Link</div>
+                </a>
+
+                <a href="simulator.html?id=clone-phishing" class="glass-card hazard-card category-link">
+                    <div class="card-icon">📄</div>
+                    <h3>Clone Phishing</h3>
+                    <p>Intercepted legitimate emails resent with malicious links or "updated" bank details attached.</p>
+                    <div class="example-box"><strong>Simulator:</strong> Updated Invoice PDF</div>
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

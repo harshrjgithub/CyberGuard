@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | Trojans</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <span class="shield-icon">🛡️</span>
+            <h1>CyberGuard</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-btn">Home</a></li>
+            <li><a href="trojans.html" class="nav-btn active">Trojans</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section class="active animate-in">
+            <a href="index.html" class="back-link">← Back to Directory</a>
+
+            <div class="section-header">
+                <h2>Trojan Horses</h2>
+                <p>Malware disguised as legitimate software. Click an example below to launch the interactive
+                    simulation.</p>
+            </div>
+
+            <div class="grid-layout">
+                <a href="simulator.html?id=astaroth" class="glass-card hazard-card category-link">
+                    <div class="card-icon">🐛</div>
+                    <h3>Astaroth Banking Trojan</h3>
+                    <p>A stealthy "fileless" threat that monitors clipboards and keystrokes.</p>
+                    <div class="example-box"><strong>Simulator:</strong> Malicious ZIP File</div>
+                </a>
+
+                <a href="simulator.html?id=trojan-im" class="glass-card hazard-card category-link">
+                    <div class="card-icon">💬</div>
+                    <h3>Trojan-IM</h3>
+                    <p>Malware specifically designed to steal data, contacts, and session tokens from messaging apps.
+                    </p>
+                    <div class="example-box"><strong>Simulator:</strong> Fake Software Update</div>
+                </a>
+
+                <a href="simulator.html?id=whatsapp-gold" class="glass-card hazard-card category-link">
+                    <div class="card-icon">✨</div>
+                    <h3>"WhatsApp Gold" Hoax</h3>
+                    <p>A persistent scam promising an exclusive, feature-rich version of the app to install spyware.</p>
+                    <div class="example-box"><strong>Simulator:</strong> Gold Upgrade Link</div>
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

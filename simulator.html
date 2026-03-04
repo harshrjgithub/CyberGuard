@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard | Security Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Load shared scam data -->
+    <script src="data.js"></script>
+</head>
+
+<body class="simulator-body">
+
+    <!-- Background Decoration -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="simulator-container">
+
+        <!-- Top Bar for Context -->
+        <div class="sim-top-bar">
+            <button id="btn-exit" class="nav-btn">← Exit Simulation</button>
+            <div class="sim-badge" id="sim-topic-badge">Simulation Mode</div>
+        </div>
+
+        <!-- Interactive Simulator Core -->
+        <div class="sim-content glass-card">
+
+            <!-- Step 1: The Hook (Mock UI) -->
+            <div id="sim-hook" class="sim-step active">
+                <h3 class="sim-header" id="sim-title">Incoming Message...</h3>
+                <p class="sim-instructions">Review the message below and decide what to do.</p>
+                <div id="mock-ui-container" class="mock-device">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="sim-actions" id="sim-actions-container">
+                    <!-- Buttons populated by JS -->
+                </div>
+            </div>
+
+            <!-- Step 2: Consequence Feedback -->
+            <div id="sim-feedback" class="sim-step">
+                <div id="feedback-icon" class="feedback-icon">🚨</div>
+                <h2 id="feedback-title">Result Title</h2>
+                <p id="feedback-message">Result message.</p>
+                <div style="margin-top: 2rem;">
+                    <button id="btn-learn-more" class="cta-button">Analyze the Threat</button>
+                    <button class="nav-btn return-btn" style="margin-left: 1rem;">Return to Directory</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Deep Dive Education -->
+            <div id="sim-education" class="sim-step">
+                <h2>Threat Analysis: <span id="edu-title"></span></h2>
+
+                <div class="edu-section">
+                    <h4>🔍 How it Works</h4>
+                    <p id="edu-how"></p>
+                </div>
+
+                <div class="edu-section">
+                    <h4>🚩 Red Flags You Missed</h4>
+                    <ul id="edu-flags" class="red-flags-list"></ul>
+                </div>
+
+                <div class="edu-section">
+                    <h4>🛡️ Defense Protocol</h4>
+                    <p id="edu-defense"></p>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="cta-button return-btn">Back to Categories</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get ID from URL Note: http://localhost:8001/simulator.html?id=ceo-fraud
+            const urlParams = new URLSearchParams(window.location.search);
+            const scamId = urlParams.get('id');
+            const data = scamsData[scamId];
+
+            if (!data) {
+                document.getElementById('sim-hook').innerHTML = "<h2>Simulation not found.</h2><a href='index.html' class='nav-btn'>Return Home</a>";
+                return;
+            }
+
+            // Steps
+            const stepHook = document.getElementById('sim-hook');
+            const stepFeedback = document.getElementById('sim-feedback');
+            const stepEducation = document.getElementById('sim-education');
+
+            // Populate Step 1
+            document.getElementById('sim-topic-badge').innerText = data.title + " Simulation";
+            document.getElementById('sim-title').innerText = "Analyzing Threat: " + data.title;
+
+            const mockUiContainer = document.getElementById('mock-ui-container');
+            const actionsContainer = document.getElementById('sim-actions-container');
+
+            let mockStyle = data.type === 'phone' || data.type === 'whatsapp' ? 'mock-mobile' : 'mock-desktop';
+            mockUiContainer.className = `mock-device ${mockStyle}`;
+            mockUiContainer.innerHTML = `
+                <div class="mock-header">
+                    <strong>From:</strong> ${data.mockSender}<br>
+                    ${data.mockSubject ? `<strong>Subject:</strong> ${data.mockSubject}` : ''}
+                </div>
+                <div class="mock-body">${data.mockBody}</div>
+            `;
+
+            actionsContainer.innerHTML = `
+                <button class="action-btn bad-choice" onclick="handleChoice(false)">${data.actionBad}</button>
+                <button class="action-btn good-choice" onclick="handleChoice(true)">${data.actionGood}</button>
+            `;
+
+            // Handle Choice function
+            window.handleChoice = function (isGoodChoice) {
+                const feedback = isGoodChoice ? data.feedbackGood : data.feedbackBad;
+
+                stepHook.classList.remove('active');
+                stepFeedback.classList.add('active');
+
+                document.getElementById('feedback-icon').innerText = feedback.icon;
+                document.getElementById('feedback-title').innerText = feedback.title;
+                document.getElementById('feedback-message').innerText = feedback.msg;
+
+                stepFeedback.className = `sim-step active ${isGoodChoice ? 'success-feedback' : 'danger-feedback'}`;
+            };
+
+            // Transition to Deep Dive
+            document.getElementById('btn-learn-more').addEventListener('click', () => {
+                stepFeedback.classList.remove('active');
+                stepEducation.classList.add('active');
+
+                document.getElementById('edu-title').innerText = data.title;
+                document.getElementById('edu-how').innerText = data.edu.how;
+                document.getElementById('edu-defense').innerText = data.edu.defense;
+
+                const flagsList = document.getElementById('edu-flags');
+                flagsList.innerHTML = data.edu.flags.map(f => `<li>${f}</li>`).join('');
+            });
+
+            // Return buttons
+            document.querySelectorAll('.return-btn, #btn-exit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Navigate back to history or index
+                    if (window.history.length > 2) {
+                        window.history.back();
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
