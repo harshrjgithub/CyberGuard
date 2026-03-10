@@ -81,7 +81,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Get ID from URL Note: http://localhost:8001/simulator.html?id=ceo-fraud
             const urlParams = new URLSearchParams(window.location.search);
             const scamId = urlParams.get('id');
             const data = scamsData[scamId];
@@ -91,34 +90,100 @@
                 return;
             }
 
-            // Steps
             const stepHook = document.getElementById('sim-hook');
             const stepFeedback = document.getElementById('sim-feedback');
             const stepEducation = document.getElementById('sim-education');
 
-            // Populate Step 1
             document.getElementById('sim-topic-badge').innerText = data.title + " Simulation";
             document.getElementById('sim-title').innerText = "Analyzing Threat: " + data.title;
 
             const mockUiContainer = document.getElementById('mock-ui-container');
             const actionsContainer = document.getElementById('sim-actions-container');
 
-            let mockStyle = data.type === 'phone' || data.type === 'whatsapp' ? 'mock-mobile' : 'mock-desktop';
-            mockUiContainer.className = `mock-device ${mockStyle}`;
-            mockUiContainer.innerHTML = `
-                <div class="mock-header">
-                    <strong>From:</strong> ${data.mockSender}<br>
-                    ${data.mockSubject ? `<strong>Subject:</strong> ${data.mockSubject}` : ''}
-                </div>
-                <div class="mock-body">${data.mockBody}</div>
-            `;
+            let mockHtml = '';
+
+            // Generate Realistic UIs based on type
+            if (data.type === 'email') {
+                mockUiContainer.className = 'mock-device app-email';
+                let initial = data.mockSender.charAt(0).toUpperCase();
+                if (data.mockSender.includes('<')) {
+                    initial = data.mockSender.split('<')[0].trim().charAt(0).toUpperCase();
+                }
+                mockHtml = `
+                    <div class="email-sidebar">
+                        <div class="sidebar-item active">Inbox</div>
+                        <div class="sidebar-item">Sent</div>
+                        <div class="sidebar-item">Drafts</div>
+                        <div class="sidebar-item">Spam</div>
+                    </div>
+                    <div class="email-content">
+                        <div class="email-top">
+                            <div class="email-subject">${data.mockSubject || 'No Subject'}</div>
+                            <div class="email-sender-row">
+                                <div class="email-avatar">${initial}</div>
+                                <div class="email-sender-info">
+                                    <strong>${data.mockSender.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</strong>
+                                    <div class="email-date">To: me &bull; Just now</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="email-body-content">${data.mockBody}</div>
+                    </div>
+                `;
+            } else if (data.type === 'phone' || data.type === 'whatsapp' || data.type === 'social') {
+                mockUiContainer.className = `mock-device app-mobile app-${data.type}`;
+                let initial = data.mockSender.charAt(0).toUpperCase();
+                let callIcon = data.type === 'whatsapp' ? '📞' : (data.type === 'social' ? 'ℹ' : 'ⓘ');
+                let bodyHtml = data.mockBody.replace(/(https?:\/\/[^\s]+)/g, '<a href="#">$1</a>');
+
+                mockHtml = `
+                    <div class="mobile-screen">
+                        <div class="mobile-status">
+                            <span>12:00</span>
+                            <span>📶 100% 🔋</span>
+                        </div>
+                        <div class="mobile-nav">
+                            <div class="mobile-back">‹</div>
+                            <div class="mobile-user">
+                                <div class="mobile-user-pic">${initial}</div>
+                                <div class="mobile-user-name">${data.mockSender}</div>
+                            </div>
+                            <div class="mobile-action">${callIcon}</div>
+                        </div>
+                        <div class="mobile-chat-area">
+                            <div class="chat-bubble">
+                                ${bodyHtml}
+                            </div>
+                        </div>
+                        <div class="mobile-input-area">
+                            <div class="mobile-input-box">Type a message...</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Web / default
+                mockUiContainer.className = 'mock-device app-web';
+                mockHtml = `
+                    <div class="browser-top">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                        <div class="browser-address-bar">🔒 https://secure-portal.com</div>
+                    </div>
+                    <div class="browser-viewport">
+                        <div class="web-dialogue">
+                            <h3>${data.mockSubject || 'Security Alert'}</h3>
+                            <p>${data.mockBody}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            mockUiContainer.innerHTML = mockHtml;
 
             actionsContainer.innerHTML = `
                 <button class="action-btn bad-choice" onclick="handleChoice(false)">${data.actionBad}</button>
                 <button class="action-btn good-choice" onclick="handleChoice(true)">${data.actionGood}</button>
             `;
 
-            // Handle Choice function
             window.handleChoice = function (isGoodChoice) {
                 const feedback = isGoodChoice ? data.feedbackGood : data.feedbackBad;
 
@@ -132,7 +197,6 @@
                 stepFeedback.className = `sim-step active ${isGoodChoice ? 'success-feedback' : 'danger-feedback'}`;
             };
 
-            // Transition to Deep Dive
             document.getElementById('btn-learn-more').addEventListener('click', () => {
                 stepFeedback.classList.remove('active');
                 stepEducation.classList.add('active');
@@ -145,10 +209,8 @@
                 flagsList.innerHTML = data.edu.flags.map(f => `<li>${f}</li>`).join('');
             });
 
-            // Return buttons
             document.querySelectorAll('.return-btn, #btn-exit').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Navigate back to history or index
                     if (window.history.length > 2) {
                         window.history.back();
                     } else {
