@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber Threat Generator - CyberGuard</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .threat-generator-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      .threat-generator-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .threat-generator-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .threat-generator-header p {
+        font-size: 1.1rem;
+        color: #9ca3af;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .threat-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        padding: 1.5rem;
+        background: rgba(17, 24, 39, 0.5);
+        border-radius: 1rem;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .control-group label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6366f1;
+      }
+
+      .control-group select,
+      .control-group input {
+        padding: 0.75rem 1rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 0.5rem;
+        color: #f3f4f6;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .control-group select:hover,
+      .control-group input:hover {
+        border-color: rgba(99, 102, 241, 0.6);
+        background: rgba(30, 41, 59, 0.95);
+      }
+
+      .control-group select:focus,
+      .control-group input:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .generate-btn {
+        align-self: flex-end;
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .generate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+      }
+
+      .generate-btn:active {
+        transform: translateY(0px);
+      }
+
+      .generate-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+      }
+
+      .threat-card-primary {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 1rem;
+        padding: 2.5rem;
+        backdrop-filter: blur(10px);
+        min-height: 500px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .threat-title-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .threat-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f3f4f6;
+        flex: 1;
+        line-height: 1.3;
+      }
+
+      .severity-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+      }
+
+      .severity-critical {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .severity-high {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+
+      .severity-medium {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+      }
+
+      .severity-low {
+        background: rgba(34, 197, 94, 0.2);
+        color: #86efac;
+        border: 1px solid rgba(34, 197, 94, 0.4);
+      }
+
+      .category-tag {
+        display: inline-block;
+        padding: 0.375rem 0.875rem;
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        color: #a5b4fc;
+        margin-bottom: 1rem;
+      }
+
+      .threat-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #d1d5db;
+        margin-bottom: 2rem;
+        flex: 1;
+      }
+
+      .threat-section {
+        margin-top: 1.5rem;
+      }
+
+      .threat-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6366f1;
+        margin-bottom: 1rem;
+      }
+
+      .prevention-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .prevention-list li {
+        padding: 0.75rem 0 0.75rem 2rem;
+        position: relative;
+        color: #e5e7eb;
+        line-height: 1.6;
+      }
+
+      .prevention-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
+      }
+
+      .threat-meta {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(99, 102, 241, 0.1);
+        font-size: 0.875rem;
+        color: #9ca3af;
+      }
+
+      .threat-meta-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .threat-meta-label {
+        color: #6366f1;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 0.5rem;
+        color: #a5b4fc;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .action-btn:hover {
+        background: rgba(99, 102, 241, 0.25);
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .action-btn.copy {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.3);
+        color: #86efac;
+      }
+
+      .action-btn.copy:hover {
+        background: rgba(34, 197, 94, 0.25);
+        border-color: rgba(34, 197, 94, 0.5);
+      }
+
+      .loading-spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        color: #6366f1;
+        font-weight: 600;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        border-top-color: #6366f1;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .sidebar-card {
+        background: rgba(17, 24, 39, 0.5);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .sidebar-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6366f1;
+        margin-bottom: 1rem;
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .history-item {
+        padding: 0.75rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        color: #d1d5db;
+      }
+
+      .history-item:hover {
+        background: rgba(99, 102, 241, 0.15);
+        border-color: rgba(99, 102, 241, 0.3);
+        transform: translateX(4px);
+      }
+
+      .history-time {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+      }
+
+      .empty-state-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .error-message {
+        padding: 1rem;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 0.5rem;
+        color: #fca5a5;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+
+      .error-icon {
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+      }
+
+      .copy-notification {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        padding: 1rem 1.5rem;
+        background: rgba(34, 197, 94, 0.9);
+        border: 1px solid rgba(34, 197, 94, 0.5);
+        border-radius: 0.5rem;
+        color: white;
+        font-weight: 600;
+        animation: slideIn 0.3s ease;
+        z-index: 1000;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .threat-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .threat-card-primary {
+          min-height: auto;
+        }
+
+        .threat-title {
+          font-size: 1.5rem;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          text-align: center;
+        }
+
+        .threat-generator-header h1 {
+          font-size: 1.75rem;
+        }
+      }
+
+      /* Scrollbar styling */
+      .history-list::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .history-list::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 3px;
+      }
+
+      .history-list::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.3);
+        border-radius: 3px;
+      }
+
+      .history-list::-webkit-scrollbar-thumb:hover {
+        background: rgba(99, 102, 241, 0.5);
+      }
+
+      /* ========================================
+         NEW EDUCATIONAL SECTIONS
+         ======================================== */
+
+      .info-section {
+        margin-bottom: 3rem;
+      }
+
+      .info-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .info-card.highlight {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%);
+        border-color: rgba(99, 102, 241, 0.4);
+      }
+
+      .info-icon {
+        font-size: 3rem;
+        flex-shrink: 0;
+      }
+
+      .info-content h3 {
+        margin: 0 0 0.5rem;
+        color: #f3f4f6;
+        font-size: 1.25rem;
+      }
+
+      .info-content p {
+        color: #d1d5db;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* Features Grid */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .feature-card {
+        padding: 1.5rem;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 0.75rem;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.5);
+        background: rgba(30, 41, 59, 0.95);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.75rem;
+      }
+
+      .feature-card h4 {
+        color: var(--primary);
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      .feature-card p {
+        color: #9ca3af;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      /* How to Use Section */
+      .how-to-section {
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 1rem;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+      }
+
+      .how-to-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #f3f4f6;
+      }
+
+      .steps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .step {
+        padding: 1.5rem;
+        background: rgba(17, 24, 39, 0.8);
+        border-left: 4px solid var(--primary);
+        border-radius: 0.5rem;
+      }
+
+      .step-number {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        display: block;
+      }
+
+      .step h4 {
+        color: var(--primary);
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      .step p {
+        color: #d1d5db;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* Categories Overview */
+      .categories-overview {
+        margin-bottom: 3rem;
+      }
+
+      .categories-overview h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #f3f4f6;
+      }
+
+      .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .category-item {
+        padding: 1.5rem;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 0.75rem;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .category-item:hover {
+        transform: translateY(-5px);
+        border-color: rgba(236, 72, 153, 0.5);
+        background: rgba(236, 72, 153, 0.05);
+      }
+
+      .cat-icon {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 0.75rem;
+      }
+
+      .category-item h4 {
+        color: #f3f4f6;
+        margin: 0 0 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .category-item p {
+        color: #9ca3af;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      /* Tips Section */
+      .tips-section {
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 1rem;
+      }
+
+      .tips-section h3 {
+        color: #fcd34d;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+      }
+
+      .tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .tips-list li {
+        padding: 1rem 0 1rem 2.5rem;
+        position: relative;
+        color: #d1d5db;
+        line-height: 1.7;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+      }
+
+      .tips-list li:last-child {
+        border-bottom: none;
+      }
+
+      .tips-list li:before {
+        content: '💡';
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        font-size: 1.2rem;
+      }
+
+      .tips-list strong {
+        color: #fcd34d;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .info-card {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .icon {
+          font-size: 2rem;
+        }
+
+        .features-grid,
+        .steps-container,
+        .categories-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="shield-icon">🛡️</span>
+            <h1>CyberGuard</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-btn">Home</a></li>
+            <li><a href="emails.html" class="nav-btn">Fake Emails</a></li>
+            <li><a href="trojans.html" class="nav-btn">Trojans</a></li>
+            <li><a href="mobile.html" class="nav-btn">Mobile Scams</a></li>
+            <li><a href="social.html" class="nav-btn">Social Threats</a></li>
+            <li><a href="threats.html" class="nav-btn active">🤖 Threat Generator</a></li>
+            <li><a href="game.html" class="nav-btn">🎮 Game</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="threat-generator-container">
+      <!-- Header -->
+      <div class="threat-generator-header">
+        <h1>Cyber Threat Generator</h1>
+        <p>Generate realistic cyber security threat scenarios powered by AI. Learn about modern attack vectors and defense strategies.</p>
+      </div>
+
+      <!-- Information Section -->
+      <div class="info-section">
+        <div class="info-card highlight">
+          <div class="info-icon">🤖</div>
+          <div class="info-content">
+            <h3>AI-Powered Threat Generation</h3>
+            <p>Our advanced AI system generates realistic cybersecurity threat scenarios by analyzing real-world attack patterns. Each threat is unique and educational, helping you understand how attackers operate in 2024.</p>
+          </div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h4>Real-World Scenarios</h4>
+            <p>Based on actual cyber attack patterns and modern techniques used by threat actors.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🎯</span>
+            <h4>Learn Attack Vectors</h4>
+            <p>Understand how phishing, social engineering, and technical attacks work in detail.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🛡️</span>
+            <h4>Defense Strategies</h4>
+            <p>Get practical prevention tips for each threat scenario you encounter.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">📈</span>
+            <h4>Progressive Learning</h4>
+            <p>Start with common attacks and progress to advanced, sophisticated threats.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- How to Use Guide -->
+      <div class="how-to-section">
+        <h2>How to Use This Tool</h2>
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1️⃣</div>
+            <h4>Select Category (Optional)</h4>
+            <p>Choose a specific threat category or leave it random for variety. Categories include Phishing, Malware, Ransomware, Cloud Security, and more.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2️⃣</div>
+            <h4>Click Generate Threat</h4>
+            <p>The AI will generate a unique, realistic cyber threat scenario in seconds. Each generation is different.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3️⃣</div>
+            <h4>Study the Threat</h4>
+            <p>Read the threat details carefully. Pay attention to the description and understand what the attacker is trying to do.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4️⃣</div>
+            <h4>Learn Prevention</h4>
+            <p>Review the prevention tips to understand how to avoid this threat in real life. Save threats you want to revisit later.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Threat Categories Overview -->
+      <div class="categories-overview">
+        <h2>Threat Categories Available</h2>
+        <div class="categories-grid">
+          <div class="category-item">
+            <span class="cat-icon">✉️</span>
+            <h4>Phishing Emails</h4>
+            <p>Deceptive emails designed to steal credentials or initiate attacks</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">🦠</span>
+            <h4>Malware & Trojans</h4>
+            <p>Malicious software that compromises system security and steals data</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">💰</span>
+            <h4>Ransomware</h4>
+            <p>Extortion attacks that encrypt data and demand payment for recovery</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">🔧</span>
+            <h4>Cloud Security</h4>
+            <p>Attacks targeting cloud infrastructure and misconfigurations</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">📱</span>
+            <h4>Mobile Threats</h4>
+            <p>Attacks on smartphones and mobile applications</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">⛓️</span>
+            <h4>Supply Chain</h4>
+            <p>Attacks through third-party vendors and software updates</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">🔢</span>
+            <h4>OTP & Credential Attacks</h4>
+            <p>Attempts to bypass 2FA and steal sensitive credentials</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">🌐</span>
+            <h4>DDoS & Network</h4>
+            <p>Distributed attacks that overwhelm network infrastructure</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">📡</span>
+            <h4>IoT Vulnerabilities</h4>
+            <p>Security flaws in smart devices and embedded systems</p>
+          </div>
+          <div class="category-item">
+            <span class="cat-icon">🎯</span>
+            <h4>Social Engineering</h4>
+            <p>Psychological manipulation to trick users into compromising security</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Important Tips -->
+      <div class="tips-section">
+        <h3>💡 Key Tips for Learning</h3>
+        <ul class="tips-list">
+          <li><strong>Pay attention to details:</strong> Attackers often hide malicious intent in small details like email addresses or URLs.</li>
+          <li><strong>Question urgency:</strong> Threats often create artificial urgency to bypass your caution - stay calm and verify.</li>
+          <li><strong>Check sources:</strong> Always verify that communications come from legitimate sources through official channels.</li>
+          <li><strong>Practice regularly:</strong> The more scenarios you study, the better you'll recognize real attacks.</li>
+          <li><strong>Learn variations:</strong> Attackers constantly evolve their tactics - understanding the core techniques helps you spot new variants.</li>
+          <li><strong>Share knowledge:</strong> Educate others about these threats to improve your organization's security posture.</li>
+        </ul>
+      </div>
+
+      <!-- Controls -->
+      <div class="threat-controls">
+        <div class="control-group">
+          <label for="categorySelect">Threat Category</label>
+          <select id="categorySelect">
+            <option value="">Random Category</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="difficultySelect">Difficulty Level</label>
+          <select id="difficultySelect">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate" selected>Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <button class="generate-btn" id="generateBtn">
+          <span class="spinner" style="display: none"></span>
+          <span id="generateBtnText">Generate Threat</span>
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Threat Card -->
+        <div class="threat-card-primary" id="threatCard">
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <p>Click "Generate Threat" to get started</p>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- History -->
+          <div class="sidebar-card">
+            <div class="sidebar-title">Recent History</div>
+            <div class="history-list" id="historyList">
+              <div class="empty-state" style="padding: 1rem">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem">—</div>
+                <p style="font-size: 0.875rem">No history yet</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="sidebar-card">
+            <div class="sidebar-title">Statistics</div>
+            <div style="font-size: 0.875rem; color: #d1d5db; line-height: 1.8">
+              <div><strong style="color: #6366f1">Generated:</strong> <span id="statsGenerated">0</span></div>
+              <div><strong style="color: #6366f1">Categories:</strong> <span id="statsCategories">0</span></div>
+              <div><strong style="color: #6366f1">Saved:</strong> <span id="statsSaved">0</span></div>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="sidebar-card">
+            <div class="sidebar-title">About</div>
+            <p style="font-size: 0.875rem; color: #9ca3af; line-height: 1.6">
+              This tool generates realistic cybersecurity threat scenarios to help you understand modern attack vectors and develop better defense strategies.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="threats.js"></script>
+  </body>
+</html>

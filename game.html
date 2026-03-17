@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Attack Simulator Game - CyberGuard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">
+      <span class="shield-icon">🛡️</span>
+      <h1>CyberGuard</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-btn">Home</a></li>
+      <li><a href="game.html" class="nav-btn active">🎮 Play Game</a></li>
+      <li><a href="threats.html" class="nav-btn">🤖 Threat Generator</a></li>
+    </ul>
+  </nav>
+
+  <!-- Game Container -->
+  <div class="game-container">
+    <!-- Start Screen -->
+    <div id="start-screen" class="game-screen active">
+      <div class="start-content">
+        <div class="hero-section">
+          <h1>Cyber Attack Simulator</h1>
+          <p>Test your ability to spot and avoid cyber threats</p>
+          <p class="subtitle">120+ realistic scenarios • Learn by doing • Challenge yourself</p>
+        </div>
+
+        <div class="difficulty-selection">
+          <h2>Choose Your Difficulty</h2>
+
+          <button class="difficulty-btn easy" data-difficulty="easy">
+            <span class="emoji">🟢</span>
+            <span class="label">Easy</span>
+            <span class="desc">Great for beginners • Forgiving penalties • Learn the basics</span>
+            <span class="scoring">+10 per correct</span>
+          </button>
+
+          <button class="difficulty-btn medium" data-difficulty="medium">
+            <span class="emoji">🟡</span>
+            <span class="label">Medium</span>
+            <span class="desc">Balanced challenge • Moderate penalties • Test your skills</span>
+            <span class="scoring">+20 per correct + streak bonus</span>
+          </button>
+
+          <button class="difficulty-btn hard" data-difficulty="hard">
+            <span class="emoji">🔴</span>
+            <span class="label">Hard</span>
+            <span class="desc">Advanced tactics • Steep penalties • Master the game</span>
+            <span class="scoring">+50 per correct + streak bonus</span>
+          </button>
+        </div>
+
+        <div class="info-box">
+          <p><strong>How to play:</strong></p>
+          <ul>
+            <li>You'll see realistic attack scenarios (emails, SMS, fake logins, etc.)</li>
+            <li>Choose your action wisely - right or wrong</li>
+            <li>Get immediate feedback with explanation</li>
+            <li>Build streaks for bonus points</li>
+            <li>Level up as you progress</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="game-screen">
+      <!-- Game Header -->
+      <div class="game-header">
+        <div class="header-stats">
+          <div class="stat">
+            <span class="label">Score</span>
+            <span class="value" id="stat-score">0</span>
+          </div>
+          <div class="stat">
+            <span class="label">Streak</span>
+            <span class="value" id="stat-streak">0</span>
+          </div>
+          <div class="stat">
+            <span class="label">Level</span>
+            <span class="value" id="stat-level">1</span>
+          </div>
+          <div class="stat">
+            <span class="label">Scenarios</span>
+            <span class="value" id="stat-count">0</span>
+          </div>
+        </div>
+
+        <button class="quit-btn" onclick="game.quitGame()">
+          ✕ Quit Game
+        </button>
+      </div>
+
+      <!-- Level Progress Bar -->
+      <div class="level-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="progress-text" id="progress-text">Level 1</span>
+      </div>
+
+      <!-- Scenario Container -->
+      <div class="scenario-wrapper">
+        <div id="scenario-container" class="scenario-container">
+          <!-- Rendered dynamically by game.js -->
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading next scenario...</p>
+      </div>
+    </div>
+
+    <!-- Feedback Screen -->
+    <div id="feedback-screen" class="game-screen">
+      <div id="feedback-container" class="feedback-container">
+        <!-- Rendered dynamically by ScenarioRenderers -->
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="game-screen">
+      <div class="results-content">
+        <div class="results-header">
+          <h2>Game Over</h2>
+          <p id="achievement">🎯 Getting Started</p>
+        </div>
+
+        <div class="results-stats">
+          <div class="result-item">
+            <span class="result-label">Final Score</span>
+            <span class="result-value" id="final-score">0</span>
+          </div>
+
+          <div class="result-item">
+            <span class="result-label">Scenarios Played</span>
+            <span class="result-value" id="total-played">0</span>
+          </div>
+
+          <div class="result-item">
+            <span class="result-label">Accuracy</span>
+            <span class="result-value" id="accuracy-percent">0%</span>
+          </div>
+
+          <div class="result-item">
+            <span class="result-label">Final Level</span>
+            <span class="result-value" id="final-level">1</span>
+          </div>
+
+          <div class="result-item">
+            <span class="result-label">Max Streak</span>
+            <span class="result-value" id="max-streak">0</span>
+          </div>
+
+          <div class="result-item">
+            <span class="result-label">Time Played</span>
+            <span class="result-value" id="time-played">0m 0s</span>
+          </div>
+        </div>
+
+        <div class="results-breakdown">
+          <div class="breakdown-item correct">
+            <span class="icon">✅</span>
+            <span class="label">Correct</span>
+            <span class="count" id="correct-count">0</span>
+          </div>
+
+          <div class="breakdown-item wrong">
+            <span class="icon">❌</span>
+            <span class="label">Wrong</span>
+            <span class="count" id="wrong-count">0</span>
+          </div>
+
+          <div class="breakdown-item categories">
+            <span class="icon">📂</span>
+            <span class="label">Categories</span>
+            <span class="count" id="categories-count">0</span>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="action-btn replay-btn" onclick="location.reload()">
+            🔄 Play Again
+          </button>
+          <button class="action-btn home-btn" onclick="window.location.href='index.html'">
+            🏠 Home
+          </button>
+        </div>
+
+        <div class="share-section">
+          <p>Share your achievement:</p>
+          <button class="share-btn" onclick="game.shareResults()">
+            📤 Share Score
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="utils/gameScenarios.js"></script>
+  <script src="game/GameEngine.js"></script>
+  <script src="game/ScenarioRenderers.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
